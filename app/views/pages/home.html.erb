@@ -22,11 +22,10 @@
 		document.addEventListener('mouseenter', function (e) {
 				croquis.down(e.clientX, e.clientY);
 				document.addEventListener('mousemove', onMouseMove);
-				document.addEventListener('mouseup', onMouseUp);
 		});
 
 		function onMouseMove(e) {
-				croquis.move(e.clientX, e.clientY);
+				croquis.move(e.clientX, e.clientY - 55);
 		}
     
 		$(document).ready(function() {
