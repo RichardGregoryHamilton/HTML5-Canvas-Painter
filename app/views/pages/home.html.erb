@@ -1,0 +1,59 @@
+
+<h2>Canvas</h2>
+
+	<script>
+
+		var croquis = new Croquis();
+		croquis.setCanvasSize(300, 300);
+		croquis.addLayer();
+		croquis.fillLayer('#abc');
+
+		var brush = new Croquis.Brush();
+		brush.setSize(15);
+		brush.setColor('#fff');
+		brush.setSpacing(0.2);
+
+		croquis.setTool(brush);
+		croquis.setToolStabilizeLevel(10);
+		croquis.setToolStabilizeWeight(0.5);
+
+		document.body.appendChild(croquis.getDOMElement());
+
+		document.addEventListener('mouseenter', function (e) {
+				croquis.down(e.clientX, e.clientY);
+				document.addEventListener('mousemove', onMouseMove);
+				document.addEventListener('mouseup', onMouseUp);
+		});
+
+		function onMouseMove(e) {
+				croquis.move(e.clientX, e.clientY);
+		}
+    
+		$(document).ready(function() {
+			var timeStart = new Date().getTime();
+			var brushStrokes = 0;
+		  $(document).keyup(function(e) {
+			  if (e.keyCode == 27) {
+					var timeEnd = new Date().getTime();
+					var elapsedTime = (timeEnd - timeStart)/1000
+				  $(".time").html("Seconds " + elapsedTime);
+					$(".brush-strokes").html("Speed " + parseFloat((brushStrokes/elapsedTime)).toFixed(2) + " BS/S");
+			  }});
+	    $("canvas").mousemove(function() {
+			  brushStrokes++;
+				var colors = ["red", "yellow", "green", "blue", "purple"];
+				brush.setColor(colors[Math.floor(Math.random() * 5)]);
+			});
+		  $("#clear-button").click(function () {
+        croquis.fillLayer('#abc');
+      });
+		});
+	</script>
+
+
+<div class="statistics">
+  <div class="move-right">
+		<p class="time"></p>
+		<p class="brush-strokes"></p>
+	</div>
+</div>
