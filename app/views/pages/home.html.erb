@@ -1,5 +1,5 @@
 <h2 class="text-center">Canvas</h2>
-
+	
 	<script>
 
 		var croquis = new Croquis();
@@ -24,13 +24,13 @@
 		});
 
 		function onMouseMove(e) {
-				croquis.move(e.clientX - 160, e.clientY - 75);
+				croquis.move(e.clientX - 150, e.clientY - 95);
 		}
     
 		$(document).ready(function() {
 
 			var timeStart = new Date().getTime();
-			var levelStart = new Date().getTime();
+			var idleTime = 0;
 			var brushStrokes = 0;
 			var strokeCount = 0;
 			counter = setInterval(incrementCount, 1000);
@@ -44,17 +44,18 @@
 				strokeCount++;
 			}
 			
-		  setInterval(resetCount, 2000);
-			
-			function resetCount () {
-			  if (brushStrokes < 120) {
-			    brushStrokes = 0;
-				}
-				else {
-				  brushStrokes = 100;
-				}
-			}
-			
+			$(document).idle({
+			  onIdle: function() {
+				  brushStrokes = 0;
+					startTime = new Date().getTime();
+				},
+				onActive: function() {
+				  idleTime += (Math.ceil((new Date().getTime() - startTime)/1000));
+				},
+
+				idle: 500
+			})
+
 		  $(document).keyup(function(e) {
 	
 			  if (e.keyCode == 27) {
@@ -63,6 +64,8 @@
 					var elapsedTime = (timeEnd - timeStart)/1000
 					$("#myModal").toggle();
 					$(".time").html("Time Painting: " + Math.floor(elapsedTime/60) + ":" + Math.floor(elapsedTime % 60));
+					$(".idle").html("Idle Time: " + Math.floor(idleTime/60) + ":" + Math.floor(idleTime % 60));
+					$(".activity").html("Activity: " + (100 - parseFloat((idleTime/elapsedTime) * 100).toFixed(2)) + " %");
 					$(".brush-strokes").html("Current Speed: " + brushStrokes);
 					$(".average-speed").html("Average Speed: " + Math.floor(strokeCount/elapsedTime));
 			  }});
@@ -119,9 +122,10 @@
 				</ul>
 			</div>
       <p class="time"></p>
+			<p class="idle"></p>
+			<p class="activity"></p>
 			<p class="brush-strokes"></p>
 			<p class="average-speed"></p>
-			<p class="activity"></p>
     </div>
 
 </div>
