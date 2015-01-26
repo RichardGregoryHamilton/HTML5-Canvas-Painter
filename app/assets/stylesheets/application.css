@@ -11,6 +11,28 @@
  * file per style scope.
  *
  *= require_tree .
+ *= require bootstrap-modal-bs3patch
+ *= require bootstrap-modal
  *= require_self
  */
  
+body {
+  padding: 50px;
+  background: #5d5d5d;
+}
+
+canvas {
+  margin-left: 7%;
+}
+
+#close {
+  top: 10px;
+}
+
+.paint-board {
+  border: 1px solid black;
+}
+
+.list-right {
+  margin-left: 48%;
+}

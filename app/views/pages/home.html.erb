@@ -1,18 +1,17 @@
-
-<h2>Canvas</h2>
+<h2 class="text-center">Canvas</h2>
 
 	<script>
 
 		var croquis = new Croquis();
-		croquis.setCanvasSize(300, 300);
+		var height = window.innerHeight * 0.8
+		var width = window.innerWidth * 0.8
+		croquis.setCanvasSize(width, height);
 		croquis.addLayer();
-		croquis.fillLayer('#abc');
+		croquis.fillLayer('#fff');
 
 		var brush = new Croquis.Brush();
-		brush.setSize(15);
+		brush.setSize(25);
 		brush.setColor('#fff');
-		brush.setSpacing(0.2);
-
 		croquis.setTool(brush);
 		croquis.setToolStabilizeLevel(10);
 		croquis.setToolStabilizeWeight(0.5);
@@ -25,34 +24,104 @@
 		});
 
 		function onMouseMove(e) {
-				croquis.move(e.clientX, e.clientY - 55);
+				croquis.move(e.clientX - 160, e.clientY - 75);
 		}
     
 		$(document).ready(function() {
+
 			var timeStart = new Date().getTime();
+			var levelStart = new Date().getTime();
 			var brushStrokes = 0;
+			var strokeCount = 0;
+			counter = setInterval(incrementCount, 1000);
+			
+			$(document).bind("mousemove", function (e) {
+			  incrementCount;
+			});
+			
+			function incrementCount () {
+			  brushStrokes++;
+				strokeCount++;
+			}
+			
+		  setInterval(resetCount, 2000);
+			
+			function resetCount () {
+			  if (brushStrokes < 120) {
+			    brushStrokes = 0;
+				}
+				else {
+				  brushStrokes = 100;
+				}
+			}
+			
 		  $(document).keyup(function(e) {
+	
 			  if (e.keyCode == 27) {
+					
 					var timeEnd = new Date().getTime();
 					var elapsedTime = (timeEnd - timeStart)/1000
-				  $(".time").html("Seconds " + elapsedTime);
-					$(".brush-strokes").html("Speed " + parseFloat((brushStrokes/elapsedTime)).toFixed(2) + " BS/S");
+					$("#myModal").toggle();
+					$(".time").html("Time Painting: " + Math.floor(elapsedTime/60) + ":" + Math.floor(elapsedTime % 60));
+					$(".brush-strokes").html("Current Speed: " + brushStrokes);
+					$(".average-speed").html("Average Speed: " + Math.floor(strokeCount/elapsedTime));
 			  }});
+				
 	    $("canvas").mousemove(function() {
+			  var timeEnd = new Date().getTime();
+				var elapsedTime = (timeEnd - timeStart)/1000
+				var speed = parseFloat((brushStrokes/3)).toFixed(2);
 			  brushStrokes++;
-				var colors = ["red", "yellow", "green", "blue", "purple"];
+				strokeCount++;
+				var colors = ["red", "green", "yellow", "red", "purple"];
 				brush.setColor(colors[Math.floor(Math.random() * 5)]);
+				
+				if (speed >= 0 && speed <= 10) {
+				  brush.setSize(25);
+					brush.setSpacing(0.3);
+				}
+				else if (speed > 10 && speed <= 15) {
+				  brush.setSize(22);
+					brush.setSpacing(0.6);
+				}
+				else if (speed > 15 && speed <= 20) {
+				  brush.setSize(19);
+					brush.setSpacing(0.9);
+		  	}
+		    else if (speed > 20 && speed <= 25) {
+				brush.setSize(16);
+				brush.setSpacing(1.2);
+				}
+				else {
+				  brush.setSize(13);
+					brush.setSpacing(1.5);
+				}
 			});
-		  $("#clear-button").click(function () {
-        croquis.fillLayer('#abc');
-      });
+			
+		  $("#close").click(function() {
+			  $("#myModal").hide();
+			});
+		  
+			$("#new-painting").click(function() {
+			  location.reload();
+			});
 		});
 	</script>
 
+<div class="modal bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 
-<div class="statistics">
-  <div class="move-right">
-		<p class="time"></p>
-		<p class="brush-strokes"></p>
-	</div>
+    <div class="modal-content">
+		  <div class="modal-header">
+			  <ul class="list-inline">
+					<li><h4 class="modal-title">Statistics</h4></li>
+					  <li class="list-right"><button id="new-painting">New Painting</button></li>
+					  <li><button id="close"><span>&times;</span></button></li>
+				</ul>
+			</div>
+      <p class="time"></p>
+			<p class="brush-strokes"></p>
+			<p class="average-speed"></p>
+			<p class="activity"></p>
+    </div>
+
 </div>
