@@ -17,12 +17,7 @@
  */
  
 body {
-  padding: 50px;
   background: #5d5d5d;
-}
-
-canvas {
-  margin-left: 7%;
 }
 
 #close {
@@ -34,5 +29,5 @@ canvas {
 }
 
 .list-right {
-  margin-left: 48%;
+  margin-left: 13%;
 }

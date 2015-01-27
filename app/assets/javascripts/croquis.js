@@ -411,7 +411,7 @@ function Croquis(imageDataList, properties) {
         context.fillRect(x, y, w, h);
         if ((w > 2) && (h > 2)) {
             context.globalCompositeOperation = 'destination-out';
-            context.fillRect(x + 1, y + 1, w - 2, h - 2);
+            context.fillRect(x, y, w - 2, h - 2);
         }
     }
     self.getRenderDirtyRect = function () {
