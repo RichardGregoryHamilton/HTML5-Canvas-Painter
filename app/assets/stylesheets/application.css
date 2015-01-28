@@ -29,5 +29,13 @@ body {
 }
 
 .list-right {
-  margin-left: 13%;
+  margin-left: 5%;
+}
+
+.modal-header {
+  background: #3399CC;
+}
+
+.display-stats {
+  margin-left: 28%;
 }

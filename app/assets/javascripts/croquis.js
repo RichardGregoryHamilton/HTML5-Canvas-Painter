@@ -404,6 +404,7 @@ function Croquis(imageDataList, properties) {
         }
         domElement.appendChild(dirtyRectDisplay);
     }
+		
     function drawDirtyRect(x, y, w, h) {
         var context = dirtyRectDisplayContext;
         context.fillStyle = '#f00';
@@ -414,6 +415,7 @@ function Croquis(imageDataList, properties) {
             context.fillRect(x, y, w - 2, h - 2);
         }
     }
+		
     self.getRenderDirtyRect = function () {
         return renderDirtyRect;
     };
@@ -535,14 +537,19 @@ function Croquis(imageDataList, properties) {
         context.fillRect(0, 0, size.width, size.height);
         cacheLayer(index);
     };
+		
     self.fillLayerRect = function (fillColor, x, y, width, height, index) {
         index = index || layerIndex;
         pushDirtyRectUndo(x, y, width, height, index);
         var context = getLayerContext(index);
-        context.fillStyle = fillColor;
-        context.fillRect(x, y, width, height);
-        cacheLayer(index);
+				for (var i = 0; i < 50; i++) {
+				  context.beginPath();
+          context.fillStyle = fillColor;
+          context.arc(x,y, width/2, 0, 2 * Math.PI, false);
+				  context.fill();
+				}
     };
+		
     self.floodFill = function (x, y, r, g, b, a, index) {
         index = index || layerIndex;
         pushContextUndo(index);
@@ -1305,6 +1312,9 @@ Croquis.Brush = function () {
     this.getColor = function () {
         return color;
     };
+		
+		// Sets Brush Color
+		
     this.setColor = function (value) {
         color = value;
         transformedImageIsDirty = true;
@@ -1317,10 +1327,13 @@ Croquis.Brush = function () {
         flow = value;
         transformedImageIsDirty = true;
     };
-    var size = 10;
+    var size = 50;
     this.getSize = function () {
         return size;
     };
+		
+		// Sets Brush Size
+		
     this.setSize = function (value) {
         size = (value < 1) ? 1 : value;
         transformedImageIsDirty = true;
@@ -1329,7 +1342,10 @@ Croquis.Brush = function () {
     this.getSpacing = function () {
         return spacing;
     };
-    this.setSpacing = function (value) {
+		
+		// Sets Brush Spacing
+    
+		this.setSpacing = function (value) {
         spacing = (value < 0.01) ? 0.01 : value;
     };
     var toRad = PI / 180;

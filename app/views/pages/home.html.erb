@@ -1,17 +1,18 @@
 	<script>
 
 		var croquis = new Croquis();
-		var height = window.innerHeight
-		var width = window.innerWidth
-		croquis.setCanvasSize(width, height);
+		var h = window.innerHeight
+		var w = window.innerWidth
+		croquis.setCanvasSize(w, h);
 		croquis.addLayer();
 		croquis.fillLayer('#fff');
 
 		var brush = new Croquis.Brush();
+	  var clone = brush.clone;
 		croquis.setTool(brush);
 		brush.setColor('#fff');
 		croquis.setToolStabilizeLevel(10);
-		croquis.setToolStabilizeWeight(0.5);
+		croquis.setToolStabilizeWeight(0.6);
 
 		document.body.appendChild(croquis.getDOMElement());
 
@@ -24,143 +25,107 @@
 			croquis.move(e.clientX, e.clientY);
 		}
     
+		var i = 0;
+		
 		$(document).ready(function() {
+		
+			var colors = ["#EB4136", "#F24744", "#F15A29", "#F7941E", "#FBB040", "#FBEB40", "#F9ED32", "#DEED32", "#D7DF23", "#8DC63F", "#39B54A", "#009444",
+			"#009486", "#0094C5", "#009DEF", "#016EDA", "#2E3192", "#662D91", "#92278F", "#C95CBE"];
+				
+				setInterval(function() {
+				  i++;
+					if (i > 19) {
+					  i = 0;
+					}
+				}, 333);
+				
+				var color = "red";
+				
+			  setInterval(function() {
+				  color = colors[i];
+				}, 333);
+				
+				setInterval(function() {
+				  brush.setColor(colors[i]);
+				}, 333);
+				
 		  $("#mirror-x, #mirror-y").val("Disabled");
 			var timeStart = new Date().getTime();
-			var idleTime = 0;
+			var iTime = 0;
 			
 			$(document).cursometer({
 			  onUpdateSpeed: function(speed) {
 				  var timeEnd = new Date().getTime();
+					var s = speed * 1000;
 				  $('.current-speed').html('Current Speed: ' + ((speed * 1000).toFixed(2)) + "  Pixels/Second");
 					$('.average-speed').html('Average Speed: ' + (((speed * 1000)/((timeEnd - timeStart)/1000)).toFixed(2)) + "  Pixels/Second")
-					if ((speed * 1000) >= 0 && (speed * 1000) <= 20) {
-						brush.setSize(50);
-						brush.setSpacing(0.3);
-					}
-					else if ((speed * 1000) > 20 && (speed * 1000) <= 40) {
-						brush.setSize(44);
-						brush.setSpacing(0.6);
-					}
-					else if ((speed * 1000) > 40 && (speed * 1000) <= 60) {
-						brush.setSize(38);
-						brush.setSpacing(1.0);
-					}
-					else if ((speed * 1000) > 60 && (speed * 1000) <= 80) {
-						brush.setSize(32);
-						brush.setSpacing(1.5);
-					}
-					else {
-						brush.setSize(26);
-						brush.setSpacing(2.0);
-					}
+					
+					if ( s >= 0 && s <= 20 ) { brush.setSize(50); brush.setSpacing(Math.random() * 0.25); }
+					else if ( s > 20 && s <= 40 ) { brush.setSize(44); brush.setSpacing(0.6); }
+					else if ( s > 40 && s <= 60 ) { brush.setSize(38); brush.setSpacing(1.0); }
+					else if ( s > 60 && s <= 80 ) { brush.setSize(32); brush.setSpacing(1.5); }
+					else { brush.setSize(26); brush.setSpacing(1.5 + Math.random()); }
 				},
 				updateSpeedRate: 5
 			});
 
 			$(document).idle({
 			  onIdle: function() {
-					startTime = new Date().getTime();
+				  startTime = new Date().getTime(); 
 				},
-				onActive: function() {
-				  idleTime += (Math.ceil((new Date().getTime() - startTime)/1000));
+				onActive: function() { 
+				  iTime += (Math.ceil((new Date().getTime() - startTime)/1000));
 				},
-
 				idle: 300
 			})
 			
 		  $(document).keyup(function(e) {
 	
 			  if (e.keyCode == 27) {
-					var timeEnd = new Date().getTime();
-					var elapsedTime = (timeEnd - timeStart)/1000
+					var tEnd = new Date().getTime();
+					var eTime = (tEnd - timeStart)/1000
 					
 					$("#myModal").toggle();
-					if ((elapsedTime % 60) < 10) {
-					  $(".time").html("Time Painting: " + Math.floor(elapsedTime/60) + ":" + "0" + Math.floor(elapsedTime % 60));
-					}
-					else {
-					  $(".time").html("Time Painting: " + Math.floor(elapsedTime/60) + ":" + Math.floor(elapsedTime % 60));
-					}
-					
-					if ((idleTime % 60) < 10) {
-						$(".idle").html("Idle Time: " + Math.floor(idleTime/60) + ":" + "0" + Math.floor(idleTime % 60));
-					}
-					else {
-						$(".idle").html("Idle Time: " + Math.floor(idleTime/60) + ":" + Math.floor(idleTime % 60));
-					}
-					
-					$(".activity").html("Activity: " + (100 - parseFloat((idleTime/elapsedTime) * 100)).toFixed(2) + " %");
+					((eTime % 60) < 10) ? $(".time").html("Time Painting: " + Math.floor(eTime/60) + ":" + "0" + Math.floor(eTime % 60)) :  $(".time").html("Time Painting: " + Math.floor(eTime/60) + ":" + Math.floor(eTime % 60));
+					((iTime % 60) < 10) ? $(".idle").html("Idle Time: " + Math.floor(iTime/60) + ":" + "0" + Math.floor(iTime % 60)) : $(".idle").html("Idle Time: " + Math.floor(iTime/60) + ":" + Math.floor(iTime % 60))
+
+					$(".activity").html("Activity: " + (100 - parseFloat((iTime/eTime) * 100)).toFixed(2) + " %");
 			  }
 				
-				if (e.keyCode == 72) {
-				  $("#mirror-x").val("Enabled");
-					$("#mirror-y").val("Disabled");
-				}
-				
-				if (e.keyCode == 86) {
-				  $("#mirror-y").val("Enabled");
-					$("#mirror-x").val("Disabled");
-				}
-				
-				if (e.keyCode ==78) {
-				  location.reload();
-				}
+				if (e.keyCode == 72) { $("#mirror-x").val("Enabled"); $("#mirror-y").val("Disabled"); }
+				if (e.keyCode == 86) { $("#mirror-y").val("Enabled"); $("#mirror-x").val("Disabled"); }
+				if (e.keyCode == 78) { location.reload(); }
 				
 				});
-				
-		  var i = 0;
 			
 			$("canvas").mousemove(function(e) {
-				var timeEnd = new Date().getTime();
-				var elapsedTime = (timeEnd - timeStart)/1000
 
-				var colors = ["red", "green", "yellow", "blue", "purple"];
-				
-				if (i < colors.length) {
-				  brush.setColor(colors[i]);
-					i++;
-					if (i == 5) {
-					  i = 0;
-					}
-				}
-			
-				$("#mirror-x").click(function () {
-				  $(this).val("Enabled");
-					$("#mirror-y").val("Disabled");
-				});
-				
-				$("#mirror-y").click(function () {
-				  $(this).val("Enabled");
-					$("#mirror-x").val("Disabled");
-				});
+				var timeEnd = new Date().getTime();
+				var eTime = (timeEnd - timeStart)/1000
+				$("#mirror-x").click(function () { $(this).val("Enabled"); $("#mirror-y").val("Disabled"); });
+				$("#mirror-y").click(function () { $(this).val("Enabled"); $("#mirror-x").val("Disabled"); });
 				
 				if ($("#mirror-x").val() === "Enabled") {
-			    if(e.clientX < width / 2) {
-						croquis.fillLayerRect(colors[Math.floor(Math.random() * 5)], (e.clientX + (2 * (width/2 - e.clientX))), e.clientY, brush.getSize(), brush.getSize());
+			    if(e.clientX < w / 2) {
+						croquis.fillLayerRect(color, (e.clientX + (2 * (w/2 - e.clientX))), e.clientY, brush.getSize(), brush.getSize());
 					}
 					else {
-						croquis.fillLayerRect(colors[Math.floor(Math.random() * 5)], (e.clientX - (2 * (e.clientX - width/2))), e.clientY, brush.getSize(), brush.getSize());
+						croquis.fillLayerRect(color, (e.clientX - (2 * (e.clientX - w/2))), e.clientY, brush.getSize(), brush.getSize());
 					}
 				}
 				
 				if ($("#mirror-y").val() === "Enabled") {
-				  if(e.clientY < height / 2)  {
-					  croquis.fillLayerRect(colors[Math.floor(Math.random() * 5)], e.clientX, (e.clientY + (2 * (height/2 - e.clientY))), brush.getSize(), brush.getSize());
+				  if(e.clientY < h / 2)  {
+					  croquis.fillLayerRect(color, e.clientX, (e.clientY + (2 * (h/2 - e.clientY))), brush.getSize(), brush.getSize());
 					}
 					else {
-					  croquis.fillLayerRect(colors[Math.floor(Math.random() * 5)], e.clientX, (e.clientY - (2 * (e.ClientY - height/2))), brush.getSize(), brush.getSize());
+					  croquis.fillLayerRect(color, e.clientX, (e.clientY - (2 * (e.clientY - h/2))), brush.getSize(), brush.getSize());
 					}
 				}
 			});
 			
-		  $("#close").click(function() {
-			  $("#myModal").hide();
-			});
-		  
-			$("#new-painting").click(function() {
-			  location.reload();
-			});
+		  $("#close").click(function() { $("#myModal").hide(); });
+			$("#new-painting").click(function() { document.reload; });
 		
 		});
 	</script>
@@ -171,17 +136,19 @@
 		  <div class="modal-header">
 			  <ul class="list-inline">
 					<li><h4 class="modal-title">Statistics</h4></li>
-					<li class="list-right"><button id ="mirror-x">Horizontal</button></li>
-					<li><button id ="mirror-y">Vertical</button></li>
-					<li><button id="new-painting">New Painting</button></li>
-					<li><button id="close"><span>&times;</span></button></li>
+					<li class="list-right"><button class="btn btn-success" id ="mirror-x">Horizontal</button></li>
+					<li><button class="btn btn-info" id ="mirror-y">Vertical</button></li>
+					<li><button class="btn btn-primary" id="new-painting">New Painting</button></li>
+					<li><button class="btn btn-danger" id="close"><span>&times;</span></button></li>
 				</ul>
 			</div>
-      <p class="time"></p>
-			<p class="idle"></p>
-			<p class="activity"></p>
-			<p class="current-speed"></p>
-			<p class="average-speed"></p>
+			<div class="display-stats">
+				<p class="time"></p>
+				<p class="idle"></p>
+				<p class="activity"></p>
+				<p class="current-speed"></p>
+				<p class="average-speed"></p>
+			</div>
     </div>
 
 </div>
