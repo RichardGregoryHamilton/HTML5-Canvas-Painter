@@ -77,10 +77,34 @@
 					var elapsedTime = (timeEnd - timeStart)/1000
 					
 					$("#myModal").toggle();
-					$(".time").html("Time Painting: " + Math.floor(elapsedTime/60) + ":" + Math.floor(elapsedTime % 60));
-					$(".idle").html("Idle Time: " + Math.floor(idleTime/60) + ":" + Math.floor(idleTime % 60));
+					if ((elapsedTime % 60) < 10) {
+					  $(".time").html("Time Painting: " + Math.floor(elapsedTime/60) + ":" + "0" + Math.floor(elapsedTime % 60));
+					}
+					else {
+					  $(".time").html("Time Painting: " + Math.floor(elapsedTime/60) + ":" + Math.floor(elapsedTime % 60));
+					}
+					
+					if ((idleTime % 60) < 10) {
+						$(".idle").html("Idle Time: " + Math.floor(idleTime/60) + ":" + "0" + Math.floor(idleTime % 60));
+					}
+					else {
+						$(".idle").html("Idle Time: " + Math.floor(idleTime/60) + ":" + Math.floor(idleTime % 60));
+					}
+					
 					$(".activity").html("Activity: " + (100 - parseFloat((idleTime/elapsedTime) * 100)).toFixed(2) + " %");
-			  }});
+			  }
+				
+				if (e.keycode == 72) {
+				  $("#mirror-x").val("Enabled");
+					$("#mirror-y").val("Disabled");
+				}
+				
+				if (e.keycode == 86) {
+				  $("#mirror-y").val("Enabled");
+					$("#mirror-x").val("Disabled");
+				}
+				
+				});
 				
 	    $("canvas").mousemove(function(e) {
 				var timeEnd = new Date().getTime();
