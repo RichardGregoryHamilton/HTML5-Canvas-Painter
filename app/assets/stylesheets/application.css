@@ -39,3 +39,7 @@ body {
 .display-stats {
   margin-left: 28%;
 }
+
+.cursor-custom {
+  cursor: pointer
+}
